@@ -1,17 +1,5 @@
 import random
 
-
-def print_hand(num):
-    if num == 0:
-        print(rock)
-    elif num == 1:
-        print(paper)
-    elif num == 2:
-        print(scissors)
-    else:
-        print('Unknown value')
-
-
 rock = '''
     _______
 ---'   ____)
@@ -39,39 +27,39 @@ scissors = '''
 ---.__(___)
 '''
 
+game_images = [rock, paper, scissors]
+
 
 def game():
     try:
-        user_hand = int(
+        user_choice = int(
             input('What do you choose? type 0 for rock, 1 for paper, or 2 for scissors.\n'))
     except ValueError:
-        print('You didn\'t enter a real number, choose again')
-        return False
+        print('You didn\'t enter a real number, you lose')
+        return
 
-    if user_hand < 0 or user_hand > 2:
-        print('You didn\'t enter a number between 0-2, try again')
-        return False
+    if user_choice < 0 or user_choice > 2:
+        print('You typed invalid number, You lose!')
+        return
 
-    print_hand(user_hand)
-
-    comp_hand = random.randint(0, 2)
+    print(game_images[user_choice])
+    computer_choice = random.randint(0, 2)
     print('Computer choose:')
-    print_hand(comp_hand)
+    print(game_images[computer_choice])
 
-    if comp_hand == user_hand:
-        print('a tie')
-        return True
+    if computer_choice == user_choice:
+        print('it\'s a draw')
+        return
 
-    if (comp_hand == 0 and user_hand == 2) or (comp_hand == 1 and user_hand == 0) or (comp_hand == 2 and user_hand == 1):
-        print('Computer won the game')
+    if (computer_choice == 0 and user_choice == 2) or (computer_choice == 1 and user_choice == 0) or (computer_choice == 2 and user_choice == 1):
+        print('You lose')
     else:
-        print('You won the game')
+        print('You won!')
     return True
 
 
 while True:
-    good_input = game()
-    if good_input:
-        answer = input('Wanna play again? answer "y" or "n" ')
-        if answer[0].lower() != 'y':
-            break
+    game()
+    answer = input('Wanna play again? answer "y" or "n" ')
+    if answer.lower() != 'y' and answer.lower() != 'yes':
+        break
