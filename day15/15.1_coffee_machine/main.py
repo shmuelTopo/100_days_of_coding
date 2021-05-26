@@ -88,7 +88,7 @@ while True:
         report()
         continue
     if user_input == "off":
-        continue
+        break
     if user_input == "refill":
         ingredients = input('What would you like to refill? (separated by ,, type "all" to refill all)  ')
         if ingredients.lower() == "all":
