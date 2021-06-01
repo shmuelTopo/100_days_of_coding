@@ -1,87 +1,38 @@
-import turtle
-
-dir_map = {
-    'up': 90,
-    'down': 270,
-    'left': 180,
-    'right': 0.0
-}
-
-dir_map2 = {
-    90: 'up',
-    270: 'down',
-    180: 'left',
-    0.0: 'right'
-}
-
-turtle.register_shape('art/vertical.gif')
-turtle.register_shape('art/horizontal.gif')
-
-for horizontal in ['up', 'down']:
-    for vertical in ['left', 'right']:
-        turtle.register_shape(f'art/{horizontal}_{vertical}.gif')
-
-for part in ['head', 'tongue', 'tail']:
-    for direc in dir_map.keys():
-        turtle.register_shape(f'art/{part}_{direc}.gif')
-
-
-def get_pic(heading_dir, heading_into, special_part_of_body=None):
-
-    if special_part_of_body:
-        return f'art/{special_part_of_body}_{dir_map2.get(heading_into)}.gif'
-
-    else:
-        if heading_dir == heading_into:
-            if heading_into in [dir_map.get('left'), dir_map.get('right')]:
-                return f'art/vertical.gif'
-            else:
-                return f'art/horizontal.gif'
-        else:
-            if heading_dir == dir_map.get('up') or heading_into == dir_map.get('down'):
-                horizontal_dir = 'down'
-            else:
-                horizontal_dir = 'up'
-            if heading_dir == dir_map.get('left') or heading_into == dir_map.get('right'):
-                vertical_dir = 'right'
-            else:
-                vertical_dir = 'left'
-
-        return f'art/{horizontal_dir}_{vertical_dir}.gif'
+from utilities import get_angle, get_direction
+from segment import Segment
 
 
 class Snake:
-    starting_position = (0, 0)
-    starting_heading = 0
+    def __init__(self, segment_size_px=40):
+        self._segment_size_px = segment_size_px
+        self._segments: list[Segment] = []
+        self.initialize_the_snake()
 
-    def __init__(self):
-        self.segments = []
-        self.size = 40
-
-        for _ in range(3):
-            self.add_segment()
+    def head(self):
+        return self._segments[0]
 
     def move(self):
-        for seg_num in range(len(self.segments) - 1, 0, -1):
-            new_x = round(self.segments[seg_num - 1].xcor())
-            new_y = round(self.segments[seg_num - 1].ycor())
-            heading_dir = self.segments[seg_num].heading()
-            new_heading = self.segments[seg_num - 1].heading()
-            self.segments[seg_num].setheading(new_heading)
-            self.segments[seg_num].goto(new_x, new_y)
-            if seg_num == len(self.segments) - 1:
-                self.segments[seg_num].shape(get_pic(heading_dir, new_heading, special_part_of_body='tail'))
-            else:
-                self.segments[seg_num].shape(get_pic(heading_dir, new_heading))
+        """move the snake starting from the tail into the position of the segment in front"""
 
-        first_part = self.segments[0]
-        first_part.shape(get_pic(first_part.heading(), first_part.heading(), special_part_of_body='head'))
-        self.segments[0].forward(self.size)
+        # first move the tail
+        angel_to_move_into = self._segments[-2].heading()
+        position = self._segments[-2].position()
+        self._segments[-1].move(angel_to_move_into, position, 'tail')
+
+        # loop through the loop in reverse beside the first and last index (head and tail) and move them
+        for seg_num in range(len(self._segments) - 2, 0, -1):
+            # get the angle to move into from the segment in front
+            angel_to_move_into = self._segments[seg_num - 1].heading()
+            position = self._segments[seg_num - 1].position()
+            self._segments[seg_num].move(angel_to_move_into, position, 'body')
+
+        # finally moving the head
+        self._segments[0].move(self._segments[0].heading(), (0, 0), 'head')
 
     def change_direction(self, direction):
         """Takes a str of direction up/down/left/right"""
 
-        if direction not in dir_map.keys():
+        if direction not in ['up', 'down', 'left', 'right']:
             raise ValueError(f'Wrong value, you entered {direction}, expecting up/down/left/right')
 
         if direction == 'up':
@@ -94,41 +45,30 @@ class Snake:
             self.right_key()
 
     def up_key(self):
-        print(self.segments[0].heading())
-        if self.segments[0].heading() not in [dir_map.get('up'), dir_map.get('down')]:
-            self.segments[0].setheading(dir_map.get('up'))
+        if get_direction(self._segments[0].heading()) not in ['up', 'down']:
+            self._segments[0].setheading(get_angle('up'))
 
     def down_key(self):
-        if self.segments[0].heading() not in [dir_map.get('up'), dir_map.get('down')]:
-            self.segments[0].setheading(dir_map.get('down'))
+        if get_direction(self._segments[0].heading()) not in ['up', 'down']:
+            self._segments[0].setheading(get_angle('down'))
 
     def left_key(self):
-        if self.segments[0].heading() not in [dir_map.get('left'), dir_map.get('right')]:
-            self.segments[0].setheading(dir_map.get('left'))
+        if get_direction(self._segments[0].heading()) not in ['left', 'right']:
+            self._segments[0].setheading(get_angle('left'))
 
     def right_key(self):
-        if self.segments[0].heading() not in [dir_map.get('left'), dir_map.get('right')]:
-            self.segments[0].setheading(dir_map.get('right'))
+        if get_direction(self._segments[0].heading()) not in ['left', 'right']:
+            self._segments[0].setheading(get_angle('right'))
+
+    def initialize_the_snake(self):
+        self._segments.append(Segment((self._segment_size_px * 2, 0), get_angle('right'), 'head', 40))
+        self._segments.append(Segment((self._segment_size_px, 0), get_angle('right'), 'body', 40))
+        self._segments.append(Segment((0, 0), get_angle('right'), 'tail', 40))
 
     def add_segment(self):
-        new_segment = turtle.Turtle('turtle')
-        new_segment.color('white')
-        new_segment.penup()
-        new_segment.pensize(self.size)
+        head = self._segments[0]
+        new_segment = Segment(head.position(), head.heading(), 'tongue', self._segment_size_px)
+        new_segment.forward(self._segment_size_px)
+        self._segments.insert(0, new_segment)
 
-        if not self.segments:
-            new_segment.goto(self.starting_position)
-            new_segment.setheading(self.starting_heading)
-            new_segment.shape(get_pic(new_segment.heading(), new_segment.heading(), special_part_of_body='tongue'))
-            self.segments.append(new_segment)
 
-        else:
-            new_x = round(self.segments[0].xcor())
-            new_y = round(self.segments[0].ycor())
-            heading = self.segments[0].heading()
-            new_segment.goto(x=new_x, y=new_y)
-            new_segment.seth(heading)
-            new_segment.shape(get_pic(new_segment.heading(), new_segment.heading(), special_part_of_body='tongue'))
-            new_segment.forward(self.size)
-
-            self.segments.insert(0, new_segment)
