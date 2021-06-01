@@ -19,3 +19,5 @@ class Food(turtle.Turtle):
         print(f'x {random_x}, y{random_y}')
         self.goto(random_x, random_y)
 
+
+
