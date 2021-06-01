@@ -15,10 +15,11 @@ mixer.music.load('sound/peritune-spook4.wav')  # Loading Music File
 mixer.music.play()  # Playing Music with Pygame
 
 screen = turtle.Screen()
-screen.setup(width=600, height=600)
+screen.setup(width=620, height=620, starty=20)
 screen.bgcolor("green")
 screen.title("My Snake Game")
 screen.tracer(0)
+screen.cv._rootwindow.resizable(False, False)
 turtle.register_shape(f'art/background.gif')
 background = turtle.Turtle('art/background.gif')
 background.goto(-4, 4)
@@ -39,12 +40,11 @@ def play_sound(name):
 
 food = Food()
 score_board = ScoreBoard()
-
 game_is_on = True
 
 while game_is_on:
     screen.update()
-    time.sleep(0.15)
+    time.sleep(0.18)
 
     snake.move()
     if snake.head().distance(food) < 10:
@@ -62,7 +62,7 @@ while game_is_on:
                     too_close = True
 
     for cor in [snake.head().xcor(), snake.head().ycor()]:
-        if cor < -290 or cor > 290:
+        if cor < -300 or cor > 300:
             thread = threading.Thread(target=play_sound, args=['sound/game_over.wav'])
             thread.start()
             mixer.music.stop()

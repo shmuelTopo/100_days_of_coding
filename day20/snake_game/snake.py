@@ -83,9 +83,9 @@ class Snake:
             self.press_delay()
 
     def initialize_the_snake(self):
-        self.segments.append(Segment((self._segment_size_px * 2, 0), get_angle('right'), 'head', 40))
-        self.segments.append(Segment((self._segment_size_px, 0), get_angle('right'), 'body', 40))
-        self.segments.append(Segment((0, 0), get_angle('right'), 'tail', 40))
+        self.segments.append(Segment((-200, 0), get_angle('right'), 'head', 40))
+        self.segments.append(Segment((-240, 0), get_angle('right'), 'body', 40))
+        self.segments.append(Segment((-280, 0), get_angle('right'), 'tail', 40))
 
     def add_segment(self):
         head = self.segments[0]
@@ -100,5 +100,5 @@ class Snake:
             time.sleep(num)
             self.just_pressed = False
 
-        thread = threading.Thread(target=wait_time, args=[0.15])
+        thread = threading.Thread(target=wait_time, args=[0.18])
         thread.start()
