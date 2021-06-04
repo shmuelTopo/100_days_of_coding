@@ -27,7 +27,7 @@ screen.onkeypress(key='s', fun=l_paddle.down_key_pressed)
 ball = Ball()
 y_move = 10
 x_move = 10
-sleep_time_start = 0.03
+sleep_time_start = 0.02
 sleep_time = sleep_time_start
 
 
@@ -50,7 +50,7 @@ while game_is_on:
     # Detect collision with right and left paddle
     if (ball_x > 330 and ball.distance(r_paddle) <= 60) or (ball_x < -330 and ball.distance(l_paddle) <= 60):
         ball.bounce_paddle()
-        sleep_time *= 0.9
+        sleep_time *= 0.87
 
     # Detect if Right player is out of boundary
     if ball_x > 350:
@@ -62,7 +62,7 @@ while game_is_on:
     if ball_x < -350:
         ball.reset_position()
         score_board.increase_right_score()
-        sleep_time = 0.04
+        sleep_time = sleep_time_start
 
 
 screen.exitonclick()

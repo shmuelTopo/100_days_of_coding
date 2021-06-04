@@ -1,14 +1,16 @@
 from turtle import Turtle
+import turtle
 
 STARTING_POSITION = (0, -280)
 MOVE_DISTANCE = 10
 FINISH_LINE_Y = 280
 UP_ANGLE = 90
+turtle.register_shape('images/turtle.gif')
 
 
 class Player(Turtle):
     def __init__(self):
-        super().__init__('turtle')
+        super().__init__('images/turtle.gif')
         self.penup()
         self.goto(STARTING_POSITION)
         self.setheading(UP_ANGLE)
