@@ -7,15 +7,16 @@ COLORS = ["red", "orange", "green", "blue", "purple", "yellow"]
 STARTING_MOVE_DISTANCE = 5
 MOVE_INCREMENT = 10
 STARTING_X = 350
-LANES = range(-180, 230, 60)
 
-car_list = ["model_y", "cybertruck", "truck", "model_s", "green", "black"]
-for car in car_list:
-    turtle.register_shape(f'images/{car}.gif')
+MODE_TESLA = False
+
+
+LINE_SPACE = 30
+LANES = range(-210, 235, LINE_SPACE * 2)
 
 
 def get_random_distance():
-    return randint(200, 650)
+    return randint(100, 500)
 
 
 def create_lines(y_position):
@@ -24,7 +25,7 @@ def create_lines(y_position):
         line = Turtle('square')
         line.penup()
         line.goto(x_cor, y_position)
-        line.shapesize(stretch_wid=0.2, stretch_len=2)
+        line.shapesize(stretch_wid=0.3, stretch_len=2)
         line.color('white')
         x_cor -= 100
 
@@ -35,12 +36,13 @@ class Lane:
         self.cars = []
         self.add_car()
         self.car_distance = get_random_distance()
-        create_lines(self.starting_y - 35)
+        create_lines(self.starting_y - LINE_SPACE)
 
     def add_car(self):
-        car = Turtle(f'images/{choice(car_list)}.gif')
+        car = Turtle(f'square')
+        car.shapesize(stretch_wid=1, stretch_len=2)
         car.penup()
-        # car.shapesize(stretch_wid=1, stretch_len=2)
+
         # If cars list is empty add the new car to the starting y and starting x +  the random car distance
         if not self.cars:
             car.goto(STARTING_X - get_random_distance(), self.starting_y)
@@ -70,9 +72,16 @@ class CarManager:
         self.create_lines_for_last_lane()
 
     def create_lines_for_last_lane(self):
-        y_position = self.lanes[-1].starting_y + 25
+        y_position = self.lanes[-1].starting_y + LINE_SPACE
         create_lines(y_position)
 
     def move_lanes(self):
         for lane in self.lanes:
             lane.move_cars()
+
+    def get_cars(self) -> list:
+        car_list = []
+        for lane in self.lanes:
+            for car in lane.cars:
+                car_list.append(car)
+        return car_list
