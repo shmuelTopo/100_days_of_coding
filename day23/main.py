@@ -1,4 +1,3 @@
-import _tkinter
 import time
 from tkinter import TclError
 from turtle import Screen
@@ -11,16 +10,16 @@ import threading
 from random import choice
 import settings
 
-colors = ['cyan', 'bisque']
-colors = ['bisque']
-
+colors = ['cyan', 'bisque', 'light green', 'LemonChiffon2', 'light gray', 'gold', 'plum1', 'wheat2']
+colors = colors
 mixer.init()  # Initializing Pygame mixer
 mixer.music.load('sound/background.mp3')  # Loading Music File
 mixer.music.play()  # Playing Music with Pygame
 
 screen = Screen()
 screen.setup(width=settings.width, height=settings.height, starty=settings.start_y)
-screen.bgcolor(choice(colors))
+bg_color = choice(colors)
+screen.bgcolor(bg_color)
 screen.title('Car Crossing Game')
 screen.tracer(0)
 screen.cv._rootwindow.resizable(False, False)
@@ -62,7 +61,14 @@ while game_is_on:
             time_start = time.time()
             threading.Thread(target=play_sound, args=['sound/level_up.wav']).start()
             game_player.restart_position()
-            screen.bgcolor(choice(colors))
+            while True:
+                new_bg_color = choice(colors)
+                if new_bg_color != bg_color:
+                    screen.bgcolor(new_bg_color)
+                    bg_color = new_bg_color
+                    print(bg_color)
+                    break
+
             settings.level_up()
         screen.update()
     except TclError:

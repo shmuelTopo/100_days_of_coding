@@ -1,5 +1,17 @@
 from turtle import Turtle
+
 FONT = ("Courier", 24, "normal")
+
+
+def get_high_score() -> int:
+    with open('high_score.score') as file:
+        score: str = file.read()
+        return int(float(score))
+
+
+def update_high_score(new_high_score: int) -> None:
+    with open('high_score.score', mode='w') as file:
+        file.write(str(new_high_score))
 
 
 class Scoreboard(Turtle):
@@ -9,6 +21,7 @@ class Scoreboard(Turtle):
         self.hideturtle()
         self.level = 0
         self.score = 0
+        self.high_score = get_high_score()
         self.color('green')
         self.up_level(0)
 
@@ -26,11 +39,12 @@ class Scoreboard(Turtle):
             self.clear()
 
         self.level += 1
-        self.goto(-200, 250)
-        self.write(f'Level: {self.level}', False, 'center', ('ariel', 30, 'normal'))
-        self.goto(150, 250)
-        self.write(f'Score: {round(self.score)}', False, 'center', ('ariel', 30, 'normal'))
-
-
-
-
+        self.goto(-230, 260)
+        self.write(f'Level: {self.level}', False, 'center', ('ariel', 18, 'normal'))
+        self.goto(-100, 260)
+        if self.score > get_high_score():
+            update_high_score(round(self.score))
+            self.high_score = get_high_score()
+        self.write(f'Score: {round(self.score)}', False, 'center', ('ariel', 18, 'normal'))
+        self.goto(180, 260)
+        self.write(f'High Score: {self.high_score}', False, 'center', ('ariel', 18, 'normal'))
