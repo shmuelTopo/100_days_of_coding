@@ -1,31 +1,16 @@
-import turtle
+from random import choice
 from turtle import Turtle
-from random import randint, choice
 
-COLORS = ["red", "orange", "green", "blue", "purple", "yellow"]
-
-STARTING_MOVE_DISTANCE = 5
-MOVE_INCREMENT = 10
-STARTING_X = 350
-
-MODE_TESLA = False
-
-
-LINE_SPACE = 30
-LANES = range(-210, 235, LINE_SPACE * 2)
-
-
-def get_random_distance():
-    return randint(100, 500)
+import settings
 
 
 def create_lines(y_position):
-    x_cor = STARTING_X
+    x_cor = settings.starting_x
     while x_cor > -400:
         line = Turtle('square')
         line.penup()
         line.goto(x_cor, y_position)
-        line.shapesize(stretch_wid=0.3, stretch_len=2)
+        line.shapesize(stretch_wid=settings.lane_stretch_wid, stretch_len=settings.lane_stretch_len)
         line.color('white')
         x_cor -= 100
 
@@ -35,31 +20,31 @@ class Lane:
         self.starting_y = starting_y
         self.cars = []
         self.add_car()
-        self.car_distance = get_random_distance()
-        create_lines(self.starting_y - LINE_SPACE)
+        self.car_distance = settings.get_random_distance()
+        create_lines(self.starting_y - settings.line_space)
 
     def add_car(self):
         car = Turtle(f'square')
-        car.shapesize(stretch_wid=1, stretch_len=2)
+        car.shapesize(stretch_wid=settings.car_stretch_wid, stretch_len=settings.car_stretch_len)
         car.penup()
 
         # If cars list is empty add the new car to the starting y and starting x +  the random car distance
         if not self.cars:
-            car.goto(STARTING_X - get_random_distance(), self.starting_y)
+            car.goto(settings.starting_x - settings.get_random_distance(), self.starting_y)
         else:
-            car.goto(STARTING_X, self.starting_y)
-        car.color(choice(COLORS))
+            car.goto(settings.starting_x, self.starting_y)
+        car.color(choice(settings.car_colors))
         self.cars.append(car)
 
     def move_cars(self):
         for car in self.cars:
             car: Turtle = car
-            car.goto(x=car.xcor() - MOVE_INCREMENT, y=self.starting_y)
+            car.goto(x=car.xcor() - settings.move_increment, y=self.starting_y)
             # check if the first car (which is the last one in the list) is more than {car_distance} pixels away
-            if self.cars[-1].xcor() + self.car_distance < STARTING_X:
+            if self.cars[-1].xcor() + self.car_distance < settings.starting_x:
                 self.add_car()
                 # Update the random car distance
-                self.car_distance = get_random_distance()
+                self.car_distance = settings.get_random_distance()
             if car.xcor() < -400:
                 self.cars.remove(car)
 
@@ -67,12 +52,12 @@ class Lane:
 class CarManager:
     def __init__(self):
         self.lanes = []
-        for lane_y_position in LANES:
+        for lane_y_position in settings.lanes:
             self.lanes.append(Lane(lane_y_position))
         self.create_lines_for_last_lane()
 
     def create_lines_for_last_lane(self):
-        y_position = self.lanes[-1].starting_y + LINE_SPACE
+        y_position = self.lanes[-1].starting_y + settings.line_space
         create_lines(y_position)
 
     def move_lanes(self):
