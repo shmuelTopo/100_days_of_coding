@@ -30,3 +30,8 @@ def get_random_distance():
 def level_up():
     global sleep_time
     sleep_time *= 0.9
+
+
+def reset_game():
+    global sleep_time
+    sleep_time = 0.12

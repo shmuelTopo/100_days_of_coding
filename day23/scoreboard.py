@@ -40,6 +40,7 @@ class Scoreboard(Turtle):
 
         self.level += 1
         self.goto(-230, 260)
+        self.clear()
         self.write(f'Level: {self.level}', False, 'center', ('ariel', 18, 'normal'))
         self.goto(-100, 260)
         if self.score > get_high_score():
@@ -48,3 +49,8 @@ class Scoreboard(Turtle):
         self.write(f'Score: {round(self.score)}', False, 'center', ('ariel', 18, 'normal'))
         self.goto(180, 260)
         self.write(f'High Score: {self.high_score}', False, 'center', ('ariel', 18, 'normal'))
+
+    def reset_game(self):
+        self.level = 0
+        self.score = 0
+        self.up_level(0)
