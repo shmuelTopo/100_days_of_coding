@@ -1,5 +1,4 @@
 import turtle
-import time
 from snake import Snake
 from food import Food
 from scoreboard import ScoreBoard
@@ -38,6 +37,15 @@ def play_sound(name):
     print('done')
 
 
+def reset_game():
+    threading.Thread(target=play_sound, args=['sound/game_over.wav']).start()
+    mixer.music.stop()
+    time.sleep(3)
+    mixer.music.play()
+    score_board.reset()
+    snake.reset_game()
+
+
 food = Food()
 score_board = ScoreBoard()
 game_is_on = True
@@ -48,10 +56,9 @@ while game_is_on:
 
     snake.move()
     if snake.head().distance(food) < 10:
-        thread = threading.Thread(target=play_sound, args=['sound/eat.wav'])
-        thread.start()
+        threading.Thread(target=play_sound, args=['sound/eat.wav']).start()
         snake.add_segment()
-        score_board.update_score()
+        score_board.increase_score()
 
         too_close = True
         while too_close:
@@ -61,23 +68,17 @@ while game_is_on:
                 if segment.distance(food) < 10:
                     too_close = True
 
+    # Detect if snake hit a wall
     for cor in [snake.head().xcor(), snake.head().ycor()]:
         if cor < -300 or cor > 300:
-            thread = threading.Thread(target=play_sound, args=['sound/game_over.wav'])
-            thread.start()
-            mixer.music.stop()
-            game_is_on = False
-            score_board.game_over()
+            reset_game()
 
+    # Detect if snake hit his tail
     for segment in snake.segments:
         if segment == snake.head():
             pass
         else:
             if segment.distance(snake.head()) < 10:
-                score_board.game_over()
-                game_is_on = False
-                thread = threading.Thread(target=play_sound, args=['sound/game_over.wav'])
-                thread.start()
-                mixer.music.stop()
+                reset_game()
 
 screen.exitonclick()

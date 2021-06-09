@@ -1,5 +1,7 @@
 import time
 import threading
+import turtle
+
 from utilities import get_angle, get_direction
 from segment import Segment
 
@@ -102,3 +104,9 @@ class Snake:
 
         thread = threading.Thread(target=wait_time, args=[0.18])
         thread.start()
+
+    def reset_game(self):
+        for segment in self.segments:
+            segment.hideturtle()
+        self.segments.clear()
+        self.initialize_the_snake()
